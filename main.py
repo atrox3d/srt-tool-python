@@ -51,18 +51,18 @@ for path, file in groups.items():
         # .../moviename/
         dest_path = path.parent
         # moviename
-        dest_name = path.parent.name
+        dest_name = path.parent.parts[-1] + '.srt'
         # .../moviename/moviename.srt
-        dst = (dest_path / dest_name).with_suffix('.srt')
+        dst = dest_path / dest_name
     elif path.parent.name.lower() == 'subs':
         # if .../seasonname/subs/episodename/file.srt
 
         # .../seasonname/
         dest_path = path.parent.parent
         # episodename
-        dest_name = path.name
+        dest_name = path.parts[-1] + '.srt'
         # .../season/episodename.srt
-        dst = (dest_path / dest_name).with_suffix('.srt')
+        dst = dest_path / dest_name
     else:
         raise ValueError(f'unknown path structure: {path / file}')
 
