@@ -15,18 +15,24 @@ def get_logger(name):
     return logger
 
 
-# push command line argument for testing in pycharm
-sys.argv.append('d:/downloads')
+def get_root(path=None):
+    # push command line argument for testing in pycharm
+    sys.argv.append('d:/downloads')
 
-# get path from command line argument or work from cwd
-try:
-    root = sys.argv[1]
-except IndexError:
-    root = '.'
+    if not path:
+        # get path from command line argument or work from cwd
+        try:
+            root = sys.argv[1]
+        except IndexError:
+            root = '.'
+    else:
+        root = path
 
-# set root path
-root = Path(root).absolute()
-log.info(f'{root=}')
+        # set root path
+        root = Path(root).absolute()
+        # log.info(f'{root=}')
+        return root
+
 
 # get list of all .srt files
 srts = list(root.glob('**/*.srt'))
