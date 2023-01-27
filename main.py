@@ -3,13 +3,17 @@ import logging
 from pathlib import Path
 import shutil
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(module)s | %(levelname)-" + str(len("CRITICAL")) + "s | %(message)s",
-    datefmt='%Y/%m/%d %H:%M:%S',
-    stream=sys.stdout
-)
-log = logging.getLogger(__name__)
+
+def get_logger(name):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(module)s | %(levelname)-" + str(len("CRITICAL")) + "s | %(message)s",
+        datefmt='%Y/%m/%d %H:%M:%S',
+        stream=sys.stdout
+    )
+    logger = logging.getLogger(name)
+    return logger
+
 
 # push command line argument for testing in pycharm
 sys.argv.append('d:/downloads')
