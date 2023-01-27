@@ -38,7 +38,7 @@ def get_root(path=None) -> Path:
 
         # set root path
         root_path = Path(root_path).absolute()
-        # log.info(f'{root=}')
+        log.info(f'{root_path=}')
         return root_path
 
 
@@ -54,90 +54,76 @@ def get_srtfiles(root_path, pattern='**/*.srt') -> list[Path]:
     return srt_files
 
 
-def group_srts(srt_list: list[Path]) -> dict:
+def group_srts_by_path(srt_list: list[Path]) -> dict:
     """
     create a dictionary using srt paths as keys and a list of dicts(filename, size) as values
     :param srt_list:
     :return:
     """
-    # group srt files by path:
-    # create dictionary path -> list[ dict(filename, filesize) ]
     grouped = {}
     for srt in srt_list:
-        # select parent (movies), or parent of parent (tvshows), of srt file
-        if srt.parent.name.lower() == 'subs' or srt.parent.parent.name.lower() == 'subs':
-            # store srt filename and size in temp dict
-            filedict: dict[str, int]
+        if 'subs' in map(str.lower, srt.parts):
             filedict = dict(name=srt.name, size=srt.stat().st_size)
             #  create or update list of srt files
             if grouped.get(srt.parent, None):
                 grouped[srt.parent].append(filedict)
             else:
                 grouped[srt.parent] = [filedict]
+        else:
+            log.warning(f'SKIPPING: not under [Ss]ubs/ | {srt}')
     return grouped
 
 
-def flatten_to_biggest(grouped: dict) -> dict:
+def get_biggest(files_list: list) -> dict:
     """
-    convert list of dicts in one dict corresponding to the bigger srt file
-    :param grouped:
+    return biggest file in dict list
+    :param files_list:
     :return:
     """
-    # flatten list of srt files to the bigger file
-    flat_groups = grouped.copy()
-    for path, files in flat_groups.items():
-        bigger = None
-        max_size = 0
-        for file in files:
-            if file['size'] > max_size:
-                bigger = file['name']
-        flat_groups[path] = bigger
-    return flat_groups
+    bigger = None
+    max_size = 0
+    for file in files_list:
+        if file['size'] > max_size:
+            bigger = file
+    return bigger
 
 
-def get_copyparams(grouped: dict) -> list[dict]:
+def get_destination_path(path, file) -> Path:
     """
     create list of dicts containing source and dest path
-    :param grouped:
+    :param path:
+    :param file:
     :return:
     """
-    parameters = []
-    parameter = {}
-    # loop through flattened groups of srt files
-    for path, file in grouped.items():
-        # create source path for copy
-        source_path = path / file
 
-        if path.name.lower() == 'subs':
-            # rename srt files based on movie name
-            # if .../moviename/subs/file.srt
+    if path.name.lower() == 'subs':
+        # rename srt files based on movie name
+        # if .../moviename/subs/file.srt
 
-            # set destination path to movie folder
-            dest_path = path.parent
+        # set destination path to movie folder
+        dest_path = path.parent
 
-            # set destination filename to movie folder name + .srt
-            dest_name = path.parent.parts[-1] + '.srt'
+        # set destination filename to movie folder name + .srt
+        dest_name = path.parent.parts[-1] + '.srt'
 
-            # create destination srt path
-            destination_path = dest_path / dest_name
-        elif path.parent.name.lower() == 'subs':
-            # rename srt files based on tvshow episode name
-            # if .../seasonname/subs/episodename/file.srt
+        # create destination srt path
+        dest_path = dest_path / dest_name
+    elif path.parent.name.lower() == 'subs':
+        # rename srt files based on tvshow episode name
+        # if .../seasonname/subs/episodename/file.srt
 
-            # set destination path to tvshow folder
-            dest_path = path.parent.parent
+        # set destination path to tvshow folder
+        dest_path = path.parent.parent
 
-            # set destination filename to subtitle folder name + .srt
-            dest_name = path.parts[-1] + '.srt'
+        # set destination filename to subtitle folder name + .srt
+        dest_name = path.parts[-1] + '.srt'
 
-            # create destination srt path
-            destination_path = dest_path / dest_name
-        else:
-            # implement new structure if exception is arisen
-            raise ValueError(f'NOT IMPLEMENTED | unknown path structure: {path / file}')
-        parameter = dict(src=source_path, dst=destination_path)
-        parameters.append(parameter)
-    return parameters
+        # create destination srt path
+        dest_path = dest_path / dest_name
+    else:
+        # implement new structure if exception is arisen
+        raise ValueError(f'NOT IMPLEMENTED | unknown path structure: {path / file}')
+    return dest_path
 
 
 if __name__ == '__main__':
@@ -150,20 +136,28 @@ if __name__ == '__main__':
     srts = get_srtfiles(root)
     log.debug(f'{srts=}')
 
-    groups = group_srts(srts)
+    groups = group_srts_by_path(srts)
     log.debug(f'{groups=}')
 
-    flattened = flatten_to_biggest(groups)
-    log.debug(f'{flattened=}')
+    for path, files in groups.items():
+        biggest = get_biggest(files)
+        filename, size = biggest.values()
+        groups[path] = filename
+    log.debug(f'{groups=}')
 
-    params = get_copyparams(flattened)
-    log.debug(f'{params=}')
+    parameters = []
+    parameter = {}
+    # loop through flattened groups of srt files
+    for path, file in groups.items():
+        # create source path for copy
+        source_path = path / file
+        destination_path = get_destination_path(path, file)
+        parameter = dict(src=source_path, dst=destination_path)
+        parameters.append(parameter)
 
-    for param in params:
-        log.info(f'{param=}')
-        # src = param['src']
-        # dst = param['dst']
-        src, dst = param.values()
+    for parameter in parameters:
+        log.debug(f'{parameter=}')
+        src, dst = parameter.values()
         log.info(f'COPY | SRC | {src}')
         log.info(f'COPY | DST | {dst}')
         shutil.copy(src, dst)
