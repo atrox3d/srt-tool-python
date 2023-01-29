@@ -15,9 +15,17 @@ class Subtitle:
         self.name = path.name
         self.size = path.stat().st_size
 
+    def __str__(self):
+        return str(self.path.as_posix())
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({str(self)!r})'
+
     @classmethod
-    def get_subtitles(cls, srt_list):
-        return [cls(srt) for srt in srt_list]
+    def get_from_path(cls, path, pattern='**/*.srt') -> list:
+        if isinstance(path, str):
+            path = Path(path)
+        return [cls(srt) for srt in path.glob(pattern)]
 
     @staticmethod
     def group_by_path(subs_list) -> dict:
