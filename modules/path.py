@@ -1,25 +1,28 @@
-import sys
 from pathlib import Path
 from modules import logger
 
 log = logger.get_logger(__name__)
 
 
-def get_root(path=None) -> Path:
+def get_root(args, path=None) -> Path:
     """
     get root path to begin search
+    :param args:
     :param path:
     :return:
     """
+    log.info(f'{args=}')
+    log.info(f'{path=}')
     if not path:
         # get path from command line argument or work from cwd
-        log.info(f'{path=}')
         try:
-            root_path = sys.argv[1]
+            root_path = args[1]
         except IndexError:
+            log.warning('No Path and no script args: setting root_path to cwd')
             root_path = '.'
     else:
         root_path = path
+        log.info(f'setting {root_path=}')
 
     # set root path
     root_path = Path(root_path).absolute()
@@ -27,7 +30,7 @@ def get_root(path=None) -> Path:
     return root_path
 
 
-def get_srtfiles(root_path: Path, pattern='**/*.srt') -> list[Path]:
+def get_files(root_path: Path, pattern='**/*') -> list[Path]:
     """
     search .srt files under root path and return them in a list of paths
     :param root_path:
