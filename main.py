@@ -13,22 +13,22 @@ if __name__ == '__main__':
     # root = path.get_root('d:/downloads')
     root = path.get_root()
 
-    srts = path.get_srtfiles(root)
-    log.debug(f'{srts=}')
+    srts_files = path.get_srtfiles(root)
+    log.debug(f'{srts_files=}')
 
-    groups = logic.group_srts_by_path(srts)
-    log.debug(f'{groups=}')
+    grouped_srtfiles = logic.group_srts_by_path(srts_files)
+    log.debug(f'{grouped_srtfiles=}')
 
-    for path, files in groups.items():
+    for path, files in grouped_srtfiles.items():
         biggest = logic.get_biggest(files)
         filename, size = biggest.values()
-        groups[path] = filename
-    log.debug(f'{groups=}')
+        grouped_srtfiles[path] = filename
+    log.debug(f'{grouped_srtfiles=}')
 
     parameters = []
     parameter = {}
     # loop through flattened groups of srt files
-    for path, file in groups.items():
+    for path, file in grouped_srtfiles.items():
         # create source path for copy
         source_path = path / file
         destination_path = logic.get_destination_path(path, file)
