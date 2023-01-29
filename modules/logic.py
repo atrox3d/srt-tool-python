@@ -38,7 +38,7 @@ def get_biggest(files_list: list) -> dict:
     return bigger
 
 
-def get_destination_path(path, file) -> Path:
+def get_destination_path(path, filename) -> Path:
     """
     create list of dicts containing source and dest path
     :param path:
@@ -72,5 +72,5 @@ def get_destination_path(path, file) -> Path:
         dest_path = dest_path / dest_name
     else:
         # implement new structure if exception is arisen
-        raise ValueError(f'NOT IMPLEMENTED | unknown path structure: {path / file}')
+        raise ValueError(f'NOT IMPLEMENTED | unknown path structure: {path / filename} ')
     return dest_path

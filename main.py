@@ -1,5 +1,6 @@
 import shutil
 
+from classes.subtitles import Subtitle
 from modules import logger
 from modules import logic
 from modules import path
@@ -10,34 +11,27 @@ if __name__ == '__main__':
 
     # push command line argument for testing in pycharm
     # sys.argv.append('d:/downloads')
-    # root = path.get_root('d:/downloads')
-    root = path.get_root()
+    root = path.get_root('d:/downloads')
+    # root = path.get_root()
 
-    srts_files = path.get_srtfiles(root)
-    log.debug(f'{srts_files=}')
+    srt_files = path.get_srtfiles(root)
+    subtitles = Subtitle.get_subtitles(srt_files)
+    log.debug(f'{subtitles=}')
 
-    grouped_srtfiles = logic.group_srts_by_path(srts_files)
-    log.debug(f'{grouped_srtfiles=}')
+    grouped_subtitles = Subtitle.group_by_path(subtitles)
+    log.debug(f'{grouped_subtitles=}')
 
-    for path, files in grouped_srtfiles.items():
-        biggest = logic.get_biggest(files)
-        filename, size = biggest.values()
-        grouped_srtfiles[path] = filename
-    log.debug(f'{grouped_srtfiles=}')
+    subtitles: list[Subtitle] = []
+    for path, files in grouped_subtitles.items():
+        biggest = Subtitle.get_biggest(files)
+        subtitles.append(biggest)
+    log.debug(f'{subtitles=}')
 
-    parameters = []
-    parameter = {}
     # loop through flattened groups of srt files
-    for path, file in grouped_srtfiles.items():
+    for subtitle in subtitles:
         # create source path for copy
-        source_path = path / file
-        destination_path = logic.get_destination_path(path, file)
-        parameter = dict(src=source_path, dst=destination_path)
-        parameters.append(parameter)
-
-    for parameter in parameters:
-        log.debug(f'{parameter=}')
-        src, dst = parameter.values()
+        src = subtitle.path
+        dst = logic.get_destination_path(subtitle.parent, subtitle.name)
         log.info(f'COPY | SRC | {src}')
         log.info(f'COPY | DST | {dst}')
         shutil.copy(src, dst)

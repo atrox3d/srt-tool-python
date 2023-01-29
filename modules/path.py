@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from modules import  logger
+from modules import logger
 
 log = logger.get_logger(__name__)
 
@@ -27,7 +27,7 @@ def get_root(path=None) -> Path:
     return root_path
 
 
-def get_srtfiles(root_path, pattern='**/*.srt') -> list[Path]:
+def get_srtfiles(root_path: Path, pattern='**/*.srt') -> list[Path]:
     """
     search .srt files under root path and return them in a list of paths
     :param root_path:
