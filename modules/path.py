@@ -13,6 +13,7 @@ def get_root(path=None) -> Path:
     """
     if not path:
         # get path from command line argument or work from cwd
+        log.info(f'{path=}')
         try:
             root_path = sys.argv[1]
         except IndexError:
@@ -20,10 +21,10 @@ def get_root(path=None) -> Path:
     else:
         root_path = path
 
-        # set root path
-        root_path = Path(root_path).absolute()
-        log.info(f'{root_path=}')
-        return root_path
+    # set root path
+    root_path = Path(root_path).absolute()
+    log.info(f'{root_path=}')
+    return root_path
 
 
 def get_srtfiles(root_path, pattern='**/*.srt') -> list[Path]:

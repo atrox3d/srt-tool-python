@@ -10,7 +10,8 @@ if __name__ == '__main__':
 
     # push command line argument for testing in pycharm
     # sys.argv.append('d:/downloads')
-    root = path.get_root('d:/downloads')
+    # root = path.get_root('d:/downloads')
+    root = path.get_root()
 
     srts = path.get_srtfiles(root)
     log.debug(f'{srts=}')
