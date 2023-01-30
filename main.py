@@ -1,7 +1,7 @@
 import shutil
 import sys
 
-from classes.subtitles import Subtitle, Subtitles
+from classes.subtitles import Subtitle, SubtitleList
 from modules import logger
 from modules import logic
 from modules import path
@@ -13,20 +13,21 @@ log = logger.get_logger(__name__)
 # sys.argv.append('d:/downloads')
 root = path.get_root(sys.argv, 'd:/downloads')
 
-subtitle_list = Subtitles.from_path(root)
+subtitle_list = SubtitleList.from_path(root)
 log.debug(f'{subtitle_list=}')
 
-grouped_subtitles = Subtitles.to_dict(subtitle_list)
+grouped_subtitles = subtitle_list.to_dict()
 log.debug(f'{grouped_subtitles=}')
 
-subtitles: list[Subtitle] = []
+# subtitles: list[Subtitle] = []
+subtitle_list = SubtitleList()
 for path, files in grouped_subtitles.items():
-    biggest = Subtitles.get_biggest(files)
-    subtitles.append(biggest)
-log.debug(f'{subtitles=}')
+    biggest = SubtitleList.get_biggest(files)
+    subtitle_list.append(biggest)
+log.debug(f'{subtitle_list=}')
 
 # loop through flattened groups of srt files
-for subtitle in subtitles:
+for subtitle in subtitle_list:
     # create source path for copy
     src = subtitle.path
     dst = logic.get_destination_path(subtitle.parent, subtitle.name)
