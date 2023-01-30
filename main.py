@@ -1,7 +1,7 @@
 import shutil
 import sys
 
-from classes.subtitles import Subtitle
+from classes.subtitles import Subtitle, Subtitles
 from modules import logger
 from modules import logic
 from modules import path
@@ -13,15 +13,15 @@ log = logger.get_logger(__name__)
 # sys.argv.append('d:/downloads')
 root = path.get_root(sys.argv, 'd:/downloads')
 
-subtitle_list = Subtitle.get_from_path(root)
+subtitle_list = Subtitles.from_path(root)
 log.debug(f'{subtitle_list=}')
 
-grouped_subtitles = Subtitle.group_by_path(subtitle_list)
+grouped_subtitles = Subtitles.to_dict(subtitle_list)
 log.debug(f'{grouped_subtitles=}')
 
 subtitles: list[Subtitle] = []
 for path, files in grouped_subtitles.items():
-    biggest = Subtitle.get_biggest(files)
+    biggest = Subtitles.get_biggest(files)
     subtitles.append(biggest)
 log.debug(f'{subtitles=}')
 

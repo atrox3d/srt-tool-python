@@ -21,14 +21,16 @@ class Subtitle:
     def __repr__(self):
         return f'{self.__class__.__name__}({str(self)!r})'
 
-    @classmethod
-    def get_from_path(cls, path, pattern='**/*.srt') -> list:
+
+class Subtitles:
+    @staticmethod
+    def from_path(path, pattern='**/*.srt') -> list:
         if isinstance(path, str):
             path = Path(path)
-        return [cls(srt) for srt in path.glob(pattern)]
+        return [Subtitle(srt) for srt in path.glob(pattern)]
 
     @staticmethod
-    def group_by_path(subs_list) -> dict:
+    def to_dict(subs_list) -> dict:
         """
         create a dictionary using srt paths as keys and a list of dicts(filename, size) as values
         :param subs_list:
