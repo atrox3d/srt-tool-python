@@ -24,7 +24,6 @@ class Subtitle:
 
 class SubtitleList(list):
     def __init__(self, iterable=None):
-        # iterable = iterable or []
         super().__init__(self._validate_and_initialize(item) for item in iterable or [])
 
     def __setitem__(self, index, item):
@@ -93,20 +92,19 @@ class SubtitleList(list):
 
 
 if __name__ == '__main__':
-    # sub = Subtitle("../2_English.srt")
-    # print(sub.path)
-    # print(sub.parent)
-    # print(sub.name)
-    # print(sub.size)
+    sub = Subtitle("../2_English.srt")
+    print(f'{sub.path=}')
+    print(f'{sub.parent=}')
+    print(f'{sub.name=}')
+    print(f'{sub.size=}')
 
-    srts = list(Path('d:/downloads').glob('**/*.srt'))
+    srts = list(Path('..').glob('**/*.srt'))
     subs = SubtitleList(srts)
-    print(subs)
-    print(f'{type(subs)=}')
-    subs.append(Subtitle('D:/downloads/movies/animation/The.Amazing.Maurice.2022.1080p.WEBRip.x265-RARBG/The.Amazing.Maurice.2022.1080p.WEBRip.x265-RARBG.srt'))
-    subs.append('D:/downloads/movies/animation/The.Amazing.Maurice.2022.1080p.WEBRip.x265-RARBG/The.Amazing.Maurice.2022.1080p.WEBRip.x265-RARBG.srt')
-    # subs.append(1)
-    subs = SubtitleList.from_path('d:/downloads')
-    print(f'{type(subs)=}')
-    subs.to_dict()
-
+    print(f'{subs=}')
+    subs.append(Subtitle('../2_English.srt'))
+    subs.append(Subtitle('../2_English.srt'))
+    print(f'{subs=}')
+    subs = SubtitleList.from_path('..')
+    print(f'{subs=}')
+    group = subs.to_dict()
+    print(f'{group=}')
