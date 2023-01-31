@@ -76,19 +76,19 @@ class SubtitleList(list):
 
 
 if __name__ == '__main__':
-    sub = Subtitle("../2_English.srt")
+    sub = Subtitle("../../2_English.srt")
     print(f'{sub.path=}')
     print(f'{sub.parent=}')
     print(f'{sub.name=}')
     print(f'{sub.size=}')
 
-    srts = list(Path('..').glob('**/*.srt'))
+    srts = list(Path('../..').glob('**/*.srt'))
     subs = SubtitleList(srts)
     print(f'{subs=}')
-    subs.append(Subtitle('../2_English.srt'))
-    subs.append(Subtitle('../2_English.srt'))
+    subs.append(Subtitle('../../2_English.srt'))
+    subs.append(Subtitle('../../2_English.srt'))
     print(f'{subs=}')
-    subs = SubtitleList.from_path('..')
+    subs = SubtitleList.from_path('../..')
     print(f'{subs=}')
     group = subs.to_dict()
     print(f'{group=}')
