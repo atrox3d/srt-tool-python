@@ -11,7 +11,7 @@ log = logger.get_logger(__name__)
 
 # push command line argument for testing in pycharm
 # sys.argv.append('d:/downloads')
-root = path.get_root(sys.argv, 'd:/downloads')
+root = path.get_root(sys.argv)
 
 subtitle_list = SubtitleList.from_path(root)
 log.debug(f'{subtitle_list=}')
@@ -19,7 +19,6 @@ log.debug(f'{subtitle_list=}')
 grouped_subtitles = subtitle_list.to_dict()
 log.debug(f'{grouped_subtitles=}')
 
-# subtitles: list[Subtitle] = []
 subtitle_list = SubtitleList()
 for path, files in grouped_subtitles.items():
     biggest = SubtitleList.get_biggest(files)
