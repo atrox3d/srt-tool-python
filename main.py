@@ -1,7 +1,8 @@
 import shutil
 import sys
 
-from classes.subtitles import Subtitle, SubtitleList
+from classes.subtitles import SubtitleList
+from classes.subtitle import Subtitle
 from modules import logger
 from modules import logic
 from modules import path
