@@ -2,10 +2,11 @@ import logging
 import sys
 
 
-def get_logger(name):
+def get_logger(name, level=logging.INFO):
     """
     get standard logger to stdout, level INFO
     :param name:
+    :param level:
     :return:
     """
     modulename_width = 12
@@ -22,10 +23,10 @@ def get_logger(name):
     date_format = '%Y/%m/%d %H:%M:%S'
 
     logging.basicConfig(
-        level=logging.INFO,
+        level=level,
         format=line_format,
         datefmt=date_format,
-        stream=sys.stdout
+        # stream=sys.stdout
     )
     logger = logging.getLogger(name)
     return logger
